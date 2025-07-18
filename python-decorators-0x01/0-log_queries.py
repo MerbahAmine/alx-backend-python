@@ -1,17 +1,21 @@
 import sqlite3
 import functools
+from datetime import datetime  # ✅ Required for timestamp logging
 
-# ✅ Decorator to log SQL queries
+# ✅ Decorator to log SQL queries with timestamp
 def log_queries(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        # Try to get the query from positional or keyword arguments
+        # Extract the SQL query
         if args:
             query = args[0]
         else:
             query = kwargs.get('query', '')
-
-        print(f"[LOG] Executing SQL Query: {query}")
+        
+        # Log with timestamp
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"[{now}] Executing SQL Query: {query}")
+        
         return func(*args, **kwargs)
     return wrapper
 
@@ -24,6 +28,6 @@ def fetch_all_users(query):
     conn.close()
     return results
 
-# ✅ Fetch users while logging the query
+# ✅ Test the function
 users = fetch_all_users(query="SELECT * FROM users")
 print(users)
